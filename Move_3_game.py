@@ -19,12 +19,25 @@ class Ball:
         self.x = random.randint(50, 150)
         self.y = random.randint(50, HEIGHT - 50)
         self.r = 10
+        self.vx = random.randint(- 5, 5)
+        self.vy = random.randint(- 5, 5)
         
     def move(self, motion):
-
-        if (0 + self.r < self.x + motion[0] < WIDTH - self.r) and (0 + self.r < self.y + motion[1] < HEIGHT - self.r):
-            self.x += motion[0]
-            self.y += motion[1]
+        
+        self.vx += motion[0]
+        self.vy += motion[1]
+        
+        new_x = self.x + self.vx
+        new_y = self.y + self.vy
+        if self.r < new_x < WIDTH - self.r:
+            self.x = new_x
+        else:
+            self.vx = - self.vx
+        self.x += self.vx
+        if self.r < new_y < HEIGHT - self.r:
+            self.y = new_y
+        else:
+            self.vy = - self.vy
         
     def hit(self, enemy):
             if ((enemy.x - self.x) ** 2 + (enemy.y - self.y) ** 2) ** 0.5 <= enemy.r + self.r:
@@ -149,13 +162,16 @@ while not finished:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                motion[0] = - 8
+                motion[0] = - 0.4
             elif event.key == pygame.K_RIGHT:
-                motion[0] = + 8
+                motion[0] = + 0.4
             elif event.key == pygame.K_UP:
-                motion[1] = - 8 
+                motion[1] = - 0.4
             elif event.key == pygame.K_DOWN:
-                motion[1] = + 8
+                motion[1] = + 0.4
+            elif event.key == pygame.K_SPACE:
+                motion[0] = - ball.vx * 0.08
+                motion[1] = - ball.vy * 0.08
     
     for meteor in meteors:
         if ball.hit(meteor):
@@ -198,5 +214,4 @@ while not finished:
     pygame.display.update()
     clock.tick(FPS)
                 
-
 pygame.quit()
